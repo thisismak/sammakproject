@@ -1,2 +1,2 @@
-let nickname: string = "Sam"
-console.log(`Hello, ${nickname}!, testing`)
+let message: Array<string | number> = ["a","b","10"]
+console.log(message)
