@@ -1,9 +1,15 @@
 {
-    "compilerOptions": {
+  "compilerOptions": {
       "target": "ES2020",
       "module": "commonjs",
       "strict": true,
-      "outDir": "dist"
-    }
-  }
-  
+      "outDir": "dist",
+      "rootDir": "./" // 添加此行以指定來源檔案目錄
+  },
+  "include": [
+      "./**/*.ts" // 確保包含所有 .ts 檔案
+  ],
+  "exclude": [
+      "node_modules" // 排除 node_modules 目錄
+  ]
+}

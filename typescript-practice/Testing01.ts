@@ -1,3 +1,3 @@
-# 控制台範例
-read -p "請輸入你的名字：" name
-echo "你好, $name!"
+function example() {
+    read(); // 確保在函數內部調用時 read 是可訪問的
+}
