@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">sammakproject</string>
-    <string name="title_activity_main">sammakproject</string>
-    <string name="package_name">com.sammak.app</string>
-    <string name="custom_url_scheme">com.sammak.app</string>
-</resources>
