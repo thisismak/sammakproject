@@ -1,2 +1,5 @@
-.venv
+# Node.js 依賴
+node_modules/
+package-lock.json
+database.db
 *.db

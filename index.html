@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>任務追蹤系統</title>
+  <!-- 使用 BootCDN 替換 React, ReactDOM, Babel -->
+  <script src="https://cdn.bootcdn.net/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/babel-standalone/7.22.9/babel.min.js"></script>
+  <!-- Tailwind CSS 使用本地或編譯版本，暫時保留原CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+  <div id="root" class="min-h-screen bg-gray-100"></div>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // 任務組件
+    const TaskList = ({ tasks, toggleTask, deleteTask, addTask, editTask }) => {
+      const [newTask, setNewTask] = useState('');
+      const [editingTask, setEditingTask] = useState(null);
+      const [editTitle, setEditTitle] = useState('');
+
+      const handleAddTask = () => {
+        if (newTask.trim()) {
+          addTask(newTask);
+          setNewTask('');
+        }
+      };
+
+      const handleEditTask = (task) => {
+        setEditingTask(task.id);
+        setEditTitle(task.title);
+      };
+
+      const handleSaveEdit = (id) => {
+        if (editTitle.trim()) {
+          editTask(id, editTitle);
+          setEditingTask(null);
+          setEditTitle('');
+        }
+      };
+
+      return (
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold mb-4">任務清單</h2>
+          <div className="flex mb-4">
+            <input
+              type="text"
+              value={newTask}
+              onChange={(e) => setNewTask(e.target.value)}
+              placeholder="輸入新任務"
+              className="flex-1 p-2 border rounded-l"
+            />
+            <button
+              onClick={handleAddTask}
+              className="bg-blue-500 text-white p-2 rounded-r hover:bg-blue-600"
+            >
+              新增任務
+            </button>
+          </div>
+          <ul className="space-y-2">
+            {tasks.map((task) => (
+              <li
+                key={task.id}
+                className="flex items-center justify-between p-2 bg-white rounded shadow"
+              >
+                {editingTask === task.id ? (
+                  <div className="flex-1 flex items-center">
+                    <input
+                      type="text"
+                      value={editTitle}
+                      onChange={(e) => setEditTitle(e.target.value)}
+                      className="flex-1 p-2 border rounded"
+                    />
+                    <button
+                      onClick={() => handleSaveEdit(task.id)}
+                      className="ml-2 bg-green-500 text-white p-2 rounded hover:bg-green-600"
+                    >
+                      儲存
+                    </button>
+                    <button
+                      onClick={() => setEditingTask(null)}
+                      className="ml-2 bg-gray-500 text-white p-2 rounded hover:bg-gray-600"
+                    >
+                      取消
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={task.completed}
+                        onChange={() => toggleTask(task.id)}
+                        className="mr-2"
+                      />
+                      <span
+                        className={`${
+                          task.completed ? 'line-through text-gray-500' : ''
+                        }`}
+                        onClick={() => handleEditTask(task)}
+                      >
+                        {task.title}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => deleteTask(task.id)}
+                      className="bg-red-500 text-white p-2 rounded hover:bg-red-600"
+                    >
+                      刪除
+                    </button>
+                  </>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      );
+    };
+
+    // 成員組件
+    const MemberList = ({ members, addMember, deleteMember }) => {
+      const [newMember, setNewMember] = useState('');
+
+      const handleAddMember = () => {
+        if (newMember.trim()) {
+          addMember(newMember);
+          setNewMember('');
+        }
+      };
+
+      return (
+        <div>
+          <h2 className="text-2xl font-bold mb-4">成員管理</h2>
+          <div className="flex mb-4">
+            <input
+              type="text"
+              value={newMember}
+              onChange={(e) => setNewMember(e.target.value)}
+              placeholder="輸入新成員名稱"
+              className="flex-1 p-2 border rounded-l"
+            />
+            <button
+              onClick={handleAddMember}
+              className="bg-blue-500 text-white p-2 rounded-r hover:bg-blue-600"
+            >
+              新增成員
+            </button>
+          </div>
+          <ul className="space-y-2">
+            {members.map((member) => (
+              <li
+                key={member.id}
+                className="flex items-center justify-between p-2 bg-white rounded shadow"
+              >
+                <span>{member.name}</span>
+                <button
+                  onClick={() => deleteMember(member.id)}
+                  className="bg-red-500 text-white p-2 rounded hover:bg-red-600"
+                >
+                  刪除
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      );
+    };
+
+    // 主應用組件
+    const App = () => {
+      const [tasks, setTasks] = useState(() => {
+        const savedTasks = localStorage.getItem('tasks');
+        return savedTasks ? JSON.parse(savedTasks) : [];
+      });
+      const [members, setMembers] = useState(() => {
+        const savedMembers = localStorage.getItem('members');
+        return savedMembers ? JSON.parse(savedMembers) : [];
+      });
+
+      useEffect(() => {
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+      }, [tasks]);
+
+      useEffect(() => {
+        localStorage.setItem('members', JSON.stringify(members));
+      }, [members]);
+
+      const addTask = (title) => {
+        setTasks([...tasks, { id: Date.now(), title, completed: false }]);
+      };
+
+      const toggleTask = (id) => {
+        setTasks(
+          tasks.map((task) =>
+            task.id === id ? { ...task, completed: !task.completed } : task
+          )
+        );
+      };
+
+      const deleteTask = (id) => {
+        setTasks(tasks.filter((task) => task.id !== id));
+      };
+
+      const editTask = (id, newTitle) => {
+        setTasks(
+          tasks.map((task) =>
+            task.id === id ? { ...task, title: newTitle } : task
+          )
+        );
+      };
+
+      const addMember = (name) => {
+        setMembers([...members, { id: Date.now(), name }]);
+      };
+
+      const deleteMember = (id) => {
+        setMembers(members.filter((member) => member.id !== id));
+      };
+
+      return (
+        <div className="container mx-auto p-4">
+          <h1 className="text-3xl font-bold mb-8 text-center">任務追蹤系統</h1>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <TaskList
+              tasks={tasks}
+              toggleTask={toggleTask}
+              deleteTask={deleteTask}
+              addTask={addTask}
+              editTask={editTask}
+            />
+            <MemberList members={members} addMember={addMember} deleteMember={deleteMember} />
+          </div>
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

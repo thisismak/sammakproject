@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>任務追蹤器</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-4">
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold text-center mb-6">任務追蹤器</h1>
+    
+    <!-- Search Bar -->
+    <div class="mb-4">
+      <input id="search" type="text" placeholder="搜尋任務..." 
+             class="w-full p-2 border rounded-md">
+    </div>
+
+    <!-- Task Form -->
+    <form id="taskForm" class="mb-6 bg-white p-4 rounded-md shadow">
+      <input type="hidden" id="taskId">
+      <div class="mb-4">
+        <label class="block text-sm font-medium">標題</label>
+        <input id="title" type="text" class="w-full p-2 border rounded-md" required>
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium">描述</label>
+        <textarea id="description" class="w-full p-2 border rounded-md" required></textarea>
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium">狀態</label>
+        <select id="status" class="w-full p-2 border rounded-md" required>
+          <option value="To Do">待辦</option>
+          <option value="In Progress">進行中</option>
+          <option value="Done">已完成</option>
+        </select>
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium">截止日期</label>
+        <input id="dueDate" type="date" class="w-full p-2 border rounded-md" required>
+      </div>
+      <button type="submit" class="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">
+        儲存任務
+      </button>
+    </form>
+
+    <!-- Task List -->
+    <div id="taskList" class="grid gap-4">
+      <!-- Tasks will be dynamically added here -->
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
